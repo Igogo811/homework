@@ -1,0 +1,38 @@
+import cv2
+import numpy as np
+
+img = cv2.imread('color_text.jpg')
+# делаем размытие
+img = cv2.GaussianBlur(img, (5, 5), 10)
+#делаем серым
+img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+# находим углы изображения
+img = cv2.Canny(img, 10, 30)
+# прописываем матрицу
+kernel = np.ones((3, 3), np.uint8)
+#увеличиваем ширину обводки
+img = cv2.dilate(img, kernel, iterations=1)
+
+
+img_string_1 = img[0:160, 0:img.shape[1]]
+new_img_string_1 = np.zeros(img_string_1.shape, dtype='uint8')
+con, hir = cv2.findContours(img_string_1, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
+img_string_1 = cv2.drawContours(new_img_string_1, con, -1, (242, 10, 234), 1)
+img_string_2 = img[160:305, 0:img.shape[1]]
+new_img_string_2 = np.zeros(img_string_2.shape, dtype='uint8')
+con, hir1 = cv2.findContours(img_string_2, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
+img_string_2 = cv2.drawContours(img_string_2, con, -1, (5, 221, 245), 1)
+img_string_3 = img[305:img.shape[0], 0:img.shape[1]]
+new_img_string_3 = np.zeros(img_string_3.shape, dtype='uint8')
+con, hir2 = cv2.findContours(img_string_3, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
+img_string_3 = cv2.drawContours(img_string_3, con, -1, (250, 5, 5), 1)
+
+
+photo = np.zeros(img.shape, dtype='uint8')
+photo[0:160, 0:img.shape[1]] = img_string_1
+photo[160:305, 0:img.shape[1]] = img_string_2
+photo[305:img.shape[0], 0:img.shape[1]] = img_string_3
+
+cv2.imshow('Result', photo)
+
+cv2.waitKey(0)
